@@ -24,7 +24,6 @@ public class GameScreen implements Screen {
     MyGdxGame game; // Note it’s "MyGdxGame" not "Game"
 
     int currentStatus;
-
     Texture startGame;
 
     public GameScreen(MyGdxGame game){
