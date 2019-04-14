@@ -22,6 +22,8 @@ public class MenuScreen implements Screen {
 
     TextButton playgamebutton;
     TextButton exitgamebutton;
+    TextButton musicbutton;
+    TextButton highscorebutton;
 
     // constructor to keep a reference to the main Game class
     public MenuScreen(MyGdxGame game){
@@ -64,6 +66,39 @@ public class MenuScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
 
 
+        musicbutton = new TextButton("Music", skin, "default");
+        musicbutton.setWidth(Gdx.graphics.getWidth()*0.2f);
+        musicbutton.setHeight(Gdx.graphics.getHeight()*0.2f);
+        musicbutton.setPosition(0,
+                0);
+        musicbutton.addListener( new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if(game.bgm.isPlaying()) {
+                    game.bgm.pause();
+                    
+                }else{
+                    game.bgm.play();
+                }
+            }
+        } );
+        stage.addActor(musicbutton);
+        Gdx.input.setInputProcessor(stage);
+
+
+        highscorebutton = new TextButton("Scores", skin, "default");
+        highscorebutton.setWidth(Gdx.graphics.getWidth()*0.2f);
+        highscorebutton.setHeight(Gdx.graphics.getHeight()*0.2f);
+        highscorebutton.setPosition(Gdx.graphics.getWidth() - highscorebutton.getWidth(),
+                Gdx.graphics.getHeight() - highscorebutton.getHeight());
+        highscorebutton.addListener( new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen( new Scores(game));
+            }
+        } );
+        stage.addActor(highscorebutton);
+        Gdx.input.setInputProcessor(stage);
 
 
     }
