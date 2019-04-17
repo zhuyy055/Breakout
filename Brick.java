@@ -51,29 +51,38 @@ public class Brick {
                 && ball.y < this.y + this.height / 2
                 && ball.x > this.x
                 && ball.x + ball.width < this.x + this.width) {
-            Gdx.app.log("brick a","i hit the bottom");
-                return true;
-        }
+            //Gdx.app.log("brick a","i hit the bottom");
 
+            ball.dirY = ball.dirY * -1;
+            return true;
+
+        }
+        // hit brick left
         else if(ball.x + ball.width > this.x
         && ball.y > this.y
         && ball.y + ball.height < this.y + this.height
         && ball.x < this.x + this.width/2){
-            Gdx.app.log("brick a","i hit the left");
+            //Gdx.app.log("brick a","i hit the left");
+            ball.dirX = ball.dirX * -1;
             return true;
         }
+        // hit brick right
         else if(ball.x < this.x + this.width
                 && ball.y > this.y
                 && ball.y + ball.height < this.y + this.height
         && ball.x + ball.width > this.x + this.width/2 ){
             Gdx.app.log("brick a","i hit the right");
+            ball.dirX = ball.dirX * -1;
             return true;
         }
+        // hit brick top
         else if(ball.x > this.x
         && ball.x + ball.width < this.x + this.width
         && ball.y  < this.y + this.height
         && ball.y + ball.height > this.y){
             Gdx.app.log("brick a","i hit the top");
+            ball.dirY = ball.dirY * -1;
+            ball.dirX = ball.dirX * -1;
             return true;
         }
         return false;

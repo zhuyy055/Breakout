@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -36,6 +37,8 @@ public class GameScreen implements Screen {
     Texture ballTexture;
     Texture barTexture;
 
+    int score;
+    Label scoreLabel;
 
 
     public GameScreen(MyGdxGame game){
@@ -61,7 +64,10 @@ public class GameScreen implements Screen {
         bar = new Bar(Gdx.graphics.getWidth()/2 - barTexture.getWidth()/2, pausegamebutton.getHeight(),64,16);
         ball = new Ball(Gdx.graphics.getWidth()/2 - ballTexture.getWidth()/2, pausegamebutton.getHeight() + bar.height,8,8);
 
-
+        score = 0;
+        scoreLabel = new Label("Score is: " + score, skin);
+        scoreLabel.setPosition(Gdx.graphics.getWidth() * 0.6f,0);
+        stage.addActor(scoreLabel);
     }
 
     public void render(float f) {
@@ -79,6 +85,8 @@ public class GameScreen implements Screen {
         stage.draw();
         batch.end();
 
+
+
         // ready to run
         if(currentStatus == 0){
             init();
@@ -88,6 +96,8 @@ public class GameScreen implements Screen {
             batch.draw(startGame, Gdx.graphics.getWidth()/2 - startGame.getWidth()/2
                     , Gdx.graphics.getHeight()/2 - startGame.getHeight()/2);
             batch.end();
+
+            // start the game
             if(Gdx.input.isTouched() == true){
                 currentStatus = 1;
             }
@@ -102,12 +112,16 @@ public class GameScreen implements Screen {
                     batch.begin();
                     batch.draw(brickArray[i].texture, brickArray[i].x, brickArray[i].y);
                     if(brickArray[i].isHit(ball) == true){
+                        score = score + 1;
+                        scoreLabel.setText("Score is: " + score);
+                        Gdx.app.log("score is: ", "sss " + score);
                         brickArray[i] = null;
                     }
                     batch.end();
                 }
             }
 
+            // check bricks
             boolean allgone = true;
             for(int i = 0; i < brickArray.length; i++){
                 if(brickArray[i] != null){
@@ -117,6 +131,7 @@ public class GameScreen implements Screen {
             // win!!!
             if(allgone == true){
                 currentStatus = 3;
+                addtoScore();
             }
 
 
@@ -135,21 +150,34 @@ public class GameScreen implements Screen {
             // you loose
             if(ballY < 0){
                 currentStatus = 4;
+                addtoScore();
             }
 
 
+            // change ball direction
+            ball.ishitBar(bar);
+
+            float barSpeed = 4f;
             // change bar position
             if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
                 if(bar.x > 0){
-                    bar.changePosition(barX - 3f,barY);
+                    bar.changePosition(barX - barSpeed,barY);
                 }
             }
 
-
             else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
                 if(bar.x < Gdx.graphics.getWidth() - bar.width) {
-                    bar.changePosition(barX + 3f, barY);
+                    bar.changePosition(barX + barSpeed, barY);
                 }
+            }
+            // cursor
+            else if(Gdx.input.isTouched()){
+
+                if(Gdx.input.getX() < Gdx.graphics.getWidth() - bar.width && Gdx.input.getX() > 0) {
+                    bar.changePosition( Gdx.input.getX(),barY);
+                }
+
+
             }
 
             batch.begin();
@@ -161,7 +189,6 @@ public class GameScreen implements Screen {
             batch.draw(barTexture, Gdx.graphics.getWidth() / 2 - barTexture.getWidth()/2, pausegamebutton.getHeight());
             batch.end();
             */
-
 
         }// pause
         else if(currentStatus == 2){
@@ -234,10 +261,11 @@ public class GameScreen implements Screen {
     public void winScreen(){
         Texture winpic = new Texture("win.png");
         batch.begin();
-        batch.draw(winpic,Gdx.graphics.getWidth()/2 - Gdx.graphics.getWidth()*0.3f/2, Gdx.graphics.getHeight()/2 - Gdx.graphics.getWidth()*0.15f/2,Gdx.graphics.getWidth()*0.3f,Gdx.graphics.getWidth()*0.15f);
+        batch.draw(winpic,Gdx.graphics.getWidth()/2 - Gdx.graphics.getWidth()*0.3f/2, Gdx.graphics.getHeight()/2 - Gdx.graphics.getWidth()*0.2f/2,Gdx.graphics.getWidth()*0.3f,Gdx.graphics.getWidth()*0.2f);
         batch.end();
 
         retrybutton.setVisible(true);
+
 
     }
 
@@ -247,15 +275,27 @@ public class GameScreen implements Screen {
         Texture loosepic = new Texture("loose.png");
 
         batch.begin();
-        batch.draw(loosepic,Gdx.graphics.getWidth()/2 - Gdx.graphics.getWidth()*0.3f/2, Gdx.graphics.getHeight()/2 - Gdx.graphics.getWidth()*0.15f/2,Gdx.graphics.getWidth()*0.3f,Gdx.graphics.getWidth()*0.15f);
+        batch.draw(loosepic,Gdx.graphics.getWidth()/2 - Gdx.graphics.getWidth()*0.3f/2, Gdx.graphics.getHeight()/2 - Gdx.graphics.getWidth()*0.2f/2,Gdx.graphics.getWidth()*0.3f,Gdx.graphics.getWidth()*0.2f);
         batch.end();
 
         retrybutton.setVisible(true);
+
+
     }
 
 
+    public void addtoScore(){
+        // add score to list
+        int index = 0;
+        while(index < game.totalscores.length && game.totalscores[index + 1] != 0 ){
+            index = index + 1;
+        }
+        game.totalscores[index + 1 ] = score;
+    }
+
 
     public void init(){
+        score = 0;
         pausegamebutton = new TextButton("Pause", skin, "default");
         pausegamebutton.setWidth(Gdx.graphics.getWidth()*0.2f);
         pausegamebutton.setHeight(Gdx.graphics.getHeight()*0.08f);
@@ -322,9 +362,11 @@ public class GameScreen implements Screen {
         int brickWidth = 32;
         int brickHeight = 16;
 
+        // init brick position
         for(int type = 1; type <= 4; type++){
             for(int x = 0; x < Gdx.graphics.getWidth(); x = x + 32){
                 // put brick position
+                // draw from top
                 brickArray[index] = new Brick(x,fromTop - brickHeight*type ,brickWidth,brickHeight,type);
                 index++;
             }
