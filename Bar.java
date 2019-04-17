@@ -2,12 +2,12 @@ package com.mygdx.game;
 
 public class Bar {
 
-    int x;
-    int y;
-    int width;
-    int height;
+    float x;
+    float y;
+    float width;
+    float height;
 
-    public Bar(int x, int y, int width, int height){
+    public Bar(float x, float y, float width, float height){
         this.x = x;
         this.y = y;
         this.width = width;
@@ -15,7 +15,7 @@ public class Bar {
     }
 
 
-    public void changePosition(int x, int y){
+    public void changePosition(float x, float y){
         this.x = x;
         this.y = y;
     }

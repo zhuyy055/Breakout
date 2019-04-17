@@ -3,10 +3,12 @@ package com.mygdx.game;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -27,9 +29,11 @@ public class GameScreen implements Screen {
     Ball ball;
     Bar bar;
 
-
     int currentStatus;
     Texture startGame;
+    Texture ballTexture;
+    Texture barTexture;
+
 
     public GameScreen(MyGdxGame game){
         this.game = game;
@@ -40,28 +44,37 @@ public class GameScreen implements Screen {
         // ready to run the game
         currentStatus = 0;
 
-        // brick ball bar
-        brickArray = new Brick[80];
-        ball = new Ball(0,0,0,0);
-        bar = new Bar(0,0,0,0);
-
 
         batch = new SpriteBatch();
         skin = new Skin(Gdx.files.internal("gui/uiskin.json"));
         stage = new Stage();
 
+        brickArray = new Brick[80];
+
         init();
 
+
+        // brick ball bar
+        bar = new Bar(Gdx.graphics.getWidth()/2 - barTexture.getWidth()/2, pausegamebutton.getHeight(),64,16);
+        ball = new Ball(Gdx.graphics.getWidth()/2 - ballTexture.getWidth()/2, pausegamebutton.getHeight() + bar.height,8,8);
+
+
     }
+
     public void render(float f) {
         Gdx.gl.glClearColor( 1f, 226/255f, 232/255f, 1 );
         Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
+
+        float ballX = ball.x;
+        float ballY = ball.y;
+        float barX = bar.x;
+        float barY = bar.y;
+
 
         batch.begin();
         // draw button
         stage.draw();
         batch.end();
-
 
         // ready to run
         if(currentStatus == 0){
@@ -74,10 +87,76 @@ public class GameScreen implements Screen {
             }
         }// running
         else if(currentStatus == 1){
+            for(int i = 0; i < brickArray.length; i++) {
+
+                // draw brick
+                if(brickArray[i]!=null) {
+                    batch.begin();
+                    batch.draw(brickArray[i].texture, brickArray[i].x, brickArray[i].y);
+                    brickArray[i].isHit(ball);
+                    batch.end();
+                }
+            }
+
+            //if()
+/*
+            batch.begin();
+            batch.draw(ballTexture, ballX, ballY);
+            batch.end();
+*/
+
+            batch.begin();
+            batch.draw(ballTexture, Gdx.input.getX() - ball.width/2, Gdx.graphics.getHeight() - Gdx.input.getY() - ball.height/2);
+            ball.changePosition(Gdx.input.getX() - ball.width/2, Gdx.graphics.getHeight() - Gdx.input.getY() - ball.height/2);
+            batch.end();
+
+
+            // change bar position
+            if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+                if(bar.x > 0){
+                    bar.changePosition(barX - 3f,barY);
+                }
+
+            }
+
+            else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+                if(bar.x < Gdx.graphics.getWidth() - bar.width) {
+                    bar.changePosition(barX + 3f, barY);
+                }
+            }
+
+            batch.begin();
+            batch.draw(barTexture, bar.x, bar.y);
+            batch.end();
+/*
+            batch.begin();
+            batch.draw(barTexture, Gdx.graphics.getWidth() / 2 - barTexture.getWidth()/2, pausegamebutton.getHeight());
+            batch.end();*/
+
 
         }// pause
         else if(currentStatus == 2){
             Gdx.app.log("Pause","pause button");
+
+            for(int i = 0; i < brickArray.length; i++) {
+
+                // draw brick
+                if(brickArray[i]!=null) {
+                    batch.begin();
+                    batch.draw(brickArray[i].texture, brickArray[i].x, brickArray[i].y);
+                    batch.end();
+                }
+            }
+
+            batch.begin();
+            batch.draw(ballTexture, ballX, ballY);
+            batch.end();
+
+            batch.begin();
+            batch.draw(barTexture, bar.x, bar.y);
+            batch.end();
+
+
         }// win
         else if(currentStatus == 3){
 
@@ -127,6 +206,24 @@ public class GameScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
 
         startGame = new Texture("save Game.png");
+
+        int index = 0;
+        int fromTop = Gdx.graphics.getHeight() - 16;
+
+        int brickWidth = 32;
+        int brickHeight = 16;
+
+        for(int type = 1; type <= 4; type++){
+            for(int x = 0; x < Gdx.graphics.getWidth(); x = x + 64){
+                // put brick position
+                brickArray[index] = new Brick(x,fromTop - brickHeight*type ,brickWidth,brickHeight,type);
+                index++;
+            }
+        }
+
+        ballTexture = new Texture("bricks/ball.png");
+
+        barTexture = new Texture("bricks/bar.png");
 
     }
     @Override
