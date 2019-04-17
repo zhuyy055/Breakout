@@ -44,15 +44,15 @@ public class Brick {
         return null;
     }
 
-    public void isHit(Ball ball){
+    public boolean isHit(Ball ball){
 
         // bottom
         if(ball.y + ball.height > this.y
                 && ball.y < this.y + this.height / 2
                 && ball.x > this.x
                 && ball.x + ball.width < this.x + this.width) {
-
             Gdx.app.log("brick a","i hit the bottom");
+                return true;
         }
 
         else if(ball.x + ball.width > this.x
@@ -60,19 +60,23 @@ public class Brick {
         && ball.y + ball.height < this.y + this.height
         && ball.x < this.x + this.width/2){
             Gdx.app.log("brick a","i hit the left");
+            return true;
         }
         else if(ball.x < this.x + this.width
                 && ball.y > this.y
                 && ball.y + ball.height < this.y + this.height
         && ball.x + ball.width > this.x + this.width/2 ){
             Gdx.app.log("brick a","i hit the right");
+            return true;
         }
         else if(ball.x > this.x
         && ball.x + ball.width < this.x + this.width
         && ball.y  < this.y + this.height
         && ball.y + ball.height > this.y){
             Gdx.app.log("brick a","i hit the top");
+            return true;
         }
+        return false;
     }
 
 

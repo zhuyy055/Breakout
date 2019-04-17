@@ -24,6 +24,7 @@ public class Ball {
     public void changePosition(float x, float y){
         this.x = x;
         this.y = y;
+        //if(this.x + this.width )
 
     }
 }
