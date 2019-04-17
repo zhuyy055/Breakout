@@ -76,7 +76,7 @@ public class MenuScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 if(game.bgm.isPlaying()) {
                     game.bgm.pause();
-                    
+
                 }else{
                     game.bgm.play();
                 }
