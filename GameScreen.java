@@ -20,8 +20,13 @@ public class GameScreen implements Screen {
     private Stage stage;
 
     TextButton pausegamebutton;
-
+    TextButton returnbutton;
     MyGdxGame game; // Note it’s "MyGdxGame" not "Game"
+
+    Brick[] brickArray;
+    Ball ball;
+    Bar bar;
+
 
     int currentStatus;
     Texture startGame;
@@ -35,37 +40,17 @@ public class GameScreen implements Screen {
         // ready to run the game
         currentStatus = 0;
 
+        // brick ball bar
+        brickArray = new Brick[80];
+        ball = new Ball(0,0,0,0);
+        bar = new Bar(0,0,0,0);
+
+
         batch = new SpriteBatch();
         skin = new Skin(Gdx.files.internal("gui/uiskin.json"));
         stage = new Stage();
 
-        pausegamebutton = new TextButton("Pause", skin, "default");
-        pausegamebutton.setWidth(Gdx.graphics.getWidth()*0.2f);
-        pausegamebutton.setHeight(Gdx.graphics.getHeight()*0.08f);
-        pausegamebutton.setPosition(0 ,
-                0);
-        pausegamebutton.addListener( new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                //Gdx.app.log("Pause","pause button");
-                // when the game is running
-                if(currentStatus == 1){
-                    currentStatus = 2;
-                    pausegamebutton.setText("CONTINUES");
-
-                }// when the game is not running
-                else if(currentStatus == 2){
-                    currentStatus = 1;
-                    pausegamebutton.setText("PAUSE");
-                }
-            }
-        } );
-        stage.addActor(pausegamebutton);
-        Gdx.input.setInputProcessor(stage);
-
-
-        startGame = new Texture("save Game.png");
-
+        init();
 
     }
     public void render(float f) {
@@ -100,6 +85,48 @@ public class GameScreen implements Screen {
         else if(currentStatus == 4){
 
         }
+    }
+
+    public void init(){
+        pausegamebutton = new TextButton("Pause", skin, "default");
+        pausegamebutton.setWidth(Gdx.graphics.getWidth()*0.2f);
+        pausegamebutton.setHeight(Gdx.graphics.getHeight()*0.08f);
+        pausegamebutton.setPosition(0 ,
+                0);
+        pausegamebutton.addListener( new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                //Gdx.app.log("Pause","pause button");
+                // when the game is running
+                if(currentStatus == 1){
+                    currentStatus = 2;
+                    pausegamebutton.setText("CONTINUES");
+
+                }// when the game is not running
+                else if(currentStatus == 2){
+                    currentStatus = 1;
+                    pausegamebutton.setText("PAUSE");
+                }
+            }
+        } );
+        stage.addActor(pausegamebutton);
+        Gdx.input.setInputProcessor(stage);
+
+        returnbutton = new TextButton("Return", skin, "default");
+        returnbutton.setWidth(Gdx.graphics.getWidth()*0.2f);
+        returnbutton.setHeight(Gdx.graphics.getHeight()*0.08f);
+        returnbutton.setPosition(Gdx.graphics.getWidth() - returnbutton.getWidth(),
+                0);
+        returnbutton.addListener( new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen( new MenuScreen(game) );
+            }
+        } );
+        stage.addActor(returnbutton);
+        Gdx.input.setInputProcessor(stage);
+
+        startGame = new Texture("save Game.png");
 
     }
     @Override
