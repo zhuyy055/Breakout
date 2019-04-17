@@ -40,7 +40,6 @@ public class Scores implements Screen {
         skin = new Skin(Gdx.files.internal("gui/uiskin.json"));
         stage = new Stage();
 
-
     }
 
     @Override
